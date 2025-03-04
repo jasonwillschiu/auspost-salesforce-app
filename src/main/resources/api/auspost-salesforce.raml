@@ -1,0 +1,117 @@
+#%RAML 1.0
+title: auspost-salesforce
+version: v1
+mediaType: application/json
+
+types:
+  AccountInput:
+    type: object
+    properties:
+      Name:
+        type: string
+        example: "Example Account 3"
+      AccountNumber:
+        type: string
+        example: "A11234528"
+
+  SalesforceCreateResponse:
+    type: object
+    properties:
+      id:
+        type: nil
+      items:
+        type: array
+        items:
+          type: object
+          properties:
+            exception:
+              type: nil
+            message:
+              type: nil
+            payload:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                id:
+                  type: string
+                errors:
+                  type: array
+            id:
+              type: string
+            successful:
+              type: boolean
+            statusCode:
+              type: nil
+      successful:
+        type: boolean
+
+  SalesforceReadResponse:
+    type: object
+    properties:
+      Id:
+        type: string
+      type:
+        type: string
+      Name:
+        type: string
+
+/sf-create:
+  post:
+    description: Create a new Salesforce account
+    headers:
+      FederationID:
+        type: string
+        required: true
+        example: person@example.com
+    body:
+      application/json:
+        type: array
+        items: AccountInput
+        example: |
+          [{
+            "Name": "Example Account 3",
+            "AccountNumber": "A11234528"
+          }]
+    responses:
+      201:
+        body:
+          application/json:
+            type: SalesforceCreateResponse
+            example: |
+              {
+                "id": null,
+                "items": [
+                  {
+                    "exception": null,
+                    "message": null,
+                    "payload": {
+                      "success": true,
+                      "id": "001dL00000p13uXQAQ",
+                      "errors": []
+                    },
+                    "id": "001dL00000p13uXQAQ",
+                    "successful": true,
+                    "statusCode": null
+                  }
+                ],
+                "successful": true
+              }
+
+/sf-read:
+  get:
+    description: Read Salesforce accounts
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            items: SalesforceReadResponse
+            example: |
+              [
+                {
+                  "Id": "001dL00000olao1QAA",
+                  "type": "Account",
+                  "Name": "Edge Communications"
+                }
+              ]
